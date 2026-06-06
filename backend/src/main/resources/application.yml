@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: doctor-appointment-api
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/doctor_appointment}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:vishal}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+server:
+  port: 8083
+  servlet:
+    # This adds /api prefix to ALL endpoints.
+    # Controllers must NOT include /api in their @RequestMapping.
+    context-path: /api
+
+logging:
+  level:
+    root: INFO
+    com.doctor: DEBUG
+
+jwt:
+  secret: ${JWT_SECRET:doctor-appointment-system-secret-key-2024}
+  expiration: 86400000
