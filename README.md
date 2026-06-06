@@ -3,7 +3,7 @@
 
 Phase 1 : Git Clone
 
-git clone : https://github.com/vishal030308-star/Hospitality_original.git
+git clone : https://github.com/devopsplan2026/hospitality.git
 
 Phase 2: Create a docker file of frontend, backend and docker-compose file.
 
@@ -48,6 +48,7 @@ EXPOSE 8083
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
 
+
 2. cd ../frontend && touch dockerfile
 Paste the content
 
@@ -81,11 +82,11 @@ RUN npm install -g serve
 # Copy the build output from the previous stage into this stage
 COPY --from=0 /app/build ./build
 
-# Expose port 3000 for the server
-EXPOSE 3000
+# Expose port 3003 for the server
+EXPOSE 3003
 
 # Command to start the server and serve the static files
-CMD ["serve", "-s", "build", "-l", "3000"]
+CMD ["serve", "-s", "build", "-l", "3003"]
 
 3. cd .. && touch docker-compose.yaml
 paste the content
@@ -138,7 +139,7 @@ services:
       dockerfile: Dockerfile               # Use Dockerfile in frontend folder
     container_name: doctor_frontend       # Container name
     ports:
-      - "3000:3000"                        # Map host port 3000 to container port 3000
+      - "3003:3003"                        # Map host port 3003 to container port 3003
     environment:
       REACT_APP_API_URL: http://localhost:8083/api  # API URL for React app
     depends_on:
@@ -568,7 +569,7 @@ metadata:
   labels:
     app: frontend
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: frontend
@@ -579,7 +580,7 @@ spec:
     spec:
       containers:
       - name: frontend-app
-        image: kristen08/frontend:v1  # replace with your specific tag if needed
+        image: kristen08/frontend:2026-06-06-113823
         ports:
         - containerPort: 3003
 
@@ -625,7 +626,7 @@ spec:
     spec:
       containers:
       - name: backend-app
-        image: kristen08/backend:v1  # replace with your specific tag if needed
+        image: kristen08/backend:2026-06-06-113823
         ports:
         - containerPort: 8083        
         env:
@@ -787,7 +788,7 @@ data:
     ('Dr. John Smith', 'Cardiology', 'john@clinic.com', 'password123', '9876543210', 'Mon-Fri: 9AM-5PM'),
     ('Dr. Sarah Johnson', 'Neurology', 'sarah@clinic.com', 'password123', '9876543211', 'Mon-Sat: 10AM-6PM'),
     ('Dr. Michael Brown', 'Orthopedics', 'michael@clinic.com', 'password123', '9876543212', 'Tue-Sat: 9AM-5PM');
- 
+
 
 
 
