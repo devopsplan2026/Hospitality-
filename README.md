@@ -5,6 +5,45 @@ Phase 1 : Git Clone
 
 git clone : https://github.com/devopsplan2026/hospitality.git
 
+Prerequisites
+
+sudo apt update
+sudo apt install openjdk-21-jdk maven nodejs npm mysql-server -y
+
+java -version
+mvn -version
+node -v
+npm -v
+mysql --version
+
+
+Database Setup
+-----------------
+sudo mysql
+
+
+CREATE DATABASE IF NOT EXISTS doctor_appointment;
+CREATE USER IF NOT EXISTS 'doctor_user'@'localhost' IDENTIFIED BY 'Doctor@Pass123!';
+GRANT ALL PRIVILEGES ON doctor_appointment.* TO 'doctor_user'@'localhost';
+FLUSH PRIVILEGES;
+
+
+USE doctor_appointment;
+SOURCE /home/vishal/Desktop/hospitality/database/init.sql;
+
+SHOW TABLES;
+EXIT;
+
+Backend Configuration
+-----------------------
+
+export SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/doctor_appointment
+export SPRING_DATASOURCE_USERNAME=doctor_user
+export SPRING_DATASOURCE_PASSWORD='Doctor@Pass123!'
+
+
+***********
+
 Phase 2: Create a docker file of frontend, backend and docker-compose file.
 
 1. cd backend && touch Dockerfile
