@@ -156,16 +156,11 @@ networks:
 
 
 ----------------------------------------------------------------
-
-Change: 3000 to 3003 and 8083 to 8083   ( optional )
-
-Run the project : sudo docker-compose up --build
-
 =======
 Run the project : 
 docker-compose up --build
 
-* Frontend: http://localhost:3000
+* Frontend: http://localhost:3003
 * Backend API: http://localhost:8083/api
 * Database: localhost:3306
 
@@ -800,7 +795,7 @@ kubectl apply -f mysql-deployment.yaml && kubectl apply -f backend-deployment.ya
 > kubectl get all -n default or kubectl get all
 
 > # Terminal 1 - Frontend
-kubectl port-forward service/frontend-service 3000:80
+kubectl port-forward service/frontend-service 3003:80
 
 > kubectl port-forward service/backend-service 8083:80
 
