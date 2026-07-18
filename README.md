@@ -19,14 +19,23 @@ mysql --version
 
 Database Setup
 -----------------
-sudo mysql
 
+sudo mysql
 
 CREATE DATABASE IF NOT EXISTS doctor_appointment;
 CREATE USER IF NOT EXISTS 'doctor_user'@'localhost' IDENTIFIED BY 'Doctor@Pass123!';
 GRANT ALL PRIVILEGES ON doctor_appointment.* TO 'doctor_user'@'localhost';
 FLUSH PRIVILEGES;
 
+AWS ec2
+
+USE doctor_appointment;
+SOURCE /home/ubuntu/hospitality/database/init.sql;
+
+SHOW TABLES;
+EXIT;
+
+local
 
 USE doctor_appointment;
 SOURCE /home/vishal/Desktop/hospitality/database/init.sql;
@@ -41,6 +50,19 @@ export SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/doctor_appointment
 export SPRING_DATASOURCE_USERNAME=doctor_user
 export SPRING_DATASOURCE_PASSWORD='Doctor@Pass123!'
 
+Run backend
+-------------
+
+cd /home/vishal/Desktop/hospitality/backend
+mvn clean package
+mvn spring-boot:run
+
+
+Run Frontend
+---------------
+
+npm install
+npm start
 
 ***********
 
