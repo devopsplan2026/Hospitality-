@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
-import { Calendar, Clock, User, FileText, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, User, FileText, ArrowLeft, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
 
 const AppointmentsSchedule = () => {
     const navigate = useNavigate();
@@ -9,12 +9,14 @@ const AppointmentsSchedule = () => {
     const [formData, setFormData] = useState({
         doctorId: '',
         appointmentDate: '',
-        appointmentTime: '',
+        appointmentTime: '09:00',
         reason: ''
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
+    const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const dateInputRef = useRef(null);
 
     const userId = localStorage.getItem('userId');
     const userType = localStorage.getItem('userType');
@@ -37,25 +39,41 @@ const AppointmentsSchedule = () => {
     };
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+
+        if (name === 'doctorId') {
+            const doctor = doctors.find((item) => String(item.id) === String(value));
+            setSelectedDoctor(doctor || null);
+        }
     };
+
+    const today = new Date().toISOString().split('T')[0];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
+        if (!formData.doctorId || !formData.appointmentDate || !formData.appointmentTime || !formData.reason.trim()) {
+            setError('Please complete all fields before booking your appointment.');
+            setLoading(false);
+            return;
+        }
+
         try {
             const appointmentData = {
                 ...formData,
-                patientId: userId,
-                doctorId: parseInt(formData.doctorId)
+                reason: formData.reason.trim(),
+                patientId: Number(userId),
+                doctorId: parseInt(formData.doctorId, 10)
             };
             await api.post('/appointment', appointmentData);
             setSuccess(true);
             setTimeout(() => navigate('/dashboard'), 2000);
         } catch (err) {
-            setError('Failed to book appointment. Please check your data.');
+            const message = err?.response?.data?.message || 'Failed to book appointment. Please check your data.';
+            setError(message);
         } finally {
             setLoading(false);
         }
@@ -92,7 +110,7 @@ const AppointmentsSchedule = () => {
                             <Calendar className="w-7 h-7" />
                             Schedule Appointment
                         </h1>
-                        <p className="text-blue-100 mt-2 opacity-80">Please fill in the details below to book your consultation.</p>
+                        <p className="text-blue-100 mt-2 opacity-80">Choose a specialist, select a future time, and share the reason for your visit.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="p-8 space-y-6">
@@ -102,6 +120,14 @@ const AppointmentsSchedule = () => {
                                 {error}
                             </div>
                         )}
+
+                        <div className="rounded-2xl border border-blue-500/20 bg-blue-500/10 p-4 flex items-start gap-3">
+                            <Sparkles className="w-5 h-5 text-blue-400 mt-0.5" />
+                            <div className="text-sm text-slate-300">
+                                <p className="font-medium text-white">Fast, guided booking</p>
+                                <p className="mt-1">Pick a doctor, choose a date at least one day in the future, and add a short reason so the clinic can prepare.</p>
+                            </div>
+                        </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -125,13 +151,18 @@ const AppointmentsSchedule = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-400 mb-2">Appointment Date</label>
-                                <div className="relative">
+                                <div
+                                className="relative cursor-pointer"
+                                onClick={() => dateInputRef.current?.showPicker?.() || dateInputRef.current?.focus()}
+                            >
                                     <Calendar className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
                                     <input
+                                        ref={dateInputRef}
                                         type="date"
                                         name="appointmentDate"
                                         value={formData.appointmentDate}
                                         onChange={handleChange}
+                                        min={today}
                                         className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                         required
                                     />
@@ -153,6 +184,14 @@ const AppointmentsSchedule = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {selectedDoctor && (
+                            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                                <p className="text-sm font-medium text-slate-300">Selected specialist</p>
+                                <p className="text-white font-semibold mt-1">{selectedDoctor.name}</p>
+                                <p className="text-slate-400 text-sm">{selectedDoctor.specialization}</p>
+                            </div>
+                        )}
 
                         <div>
                             <label className="block text-sm font-medium text-slate-400 mb-2">Reason for Visit</label>
