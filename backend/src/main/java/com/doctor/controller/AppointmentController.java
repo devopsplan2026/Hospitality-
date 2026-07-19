@@ -4,7 +4,6 @@ import com.doctor.dto.ApiResponse;
 import com.doctor.dto.StatusUpdateRequest;
 import com.doctor.entity.Appointment;
 import com.doctor.repository.AppointmentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +14,23 @@ import java.util.Optional;
 @RequestMapping("/appointment")
 public class AppointmentController {
 
-    @Autowired
-    private AppointmentRepository appointmentRepository;
+    private final AppointmentRepository appointmentRepository;
+
+    public AppointmentController(AppointmentRepository appointmentRepository) {
+        this.appointmentRepository = appointmentRepository;
+    }
 
     @PostMapping
     public ResponseEntity<ApiResponse> bookAppointment(@RequestBody Appointment appointment) {
+        if (appointment == null
+                || appointment.getPatientId() == null
+                || appointment.getDoctorId() == null
+                || appointment.getAppointmentDate() == null
+                || appointment.getAppointmentTime() == null
+                || appointment.getReason() == null || appointment.getReason().isBlank()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Please provide patient, doctor, date, time, and reason", null, 400));
+        }
+
         appointment.setStatus("pending");
         Appointment saved = appointmentRepository.save(appointment);
         return ResponseEntity.ok(new ApiResponse(true, "Appointment booked successfully", saved, 200));
