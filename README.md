@@ -4,7 +4,7 @@ A full-stack hospital appointment scheduling project with a Spring Boot backend,
 
 ## Pre-requisites
 
-- Java 17 installed and available in `PATH`
+- Java 17+ installed and available in `PATH`
 - Maven installed and available in `PATH`
 - Node.js and npm installed
 - MySQL server installed and running
@@ -15,7 +15,7 @@ A full-stack hospital appointment scheduling project with a Spring Boot backend,
 1. Clone the repository
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/devopsplan2026/Hospitality-.git
    cd hospitality
    ```
 
